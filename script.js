@@ -118,14 +118,13 @@ function addResultMessage(message, detail = "") {
     container.prepend(wrapper);
 }
 
-// サマリーをリアルタイム更新する関数
 function updateLiveSummary(currentTotal, maxCount) {
     const lang = i18n[currentLang];
     const text = lang.msgSummary
         .replace('{t}', maxCount)
         .replace('{s}', successCount)
         .replace('{f}', failCount)
-        .replace('{p}', successCount / maxCount)
+        .replace('{p}', successCount / maxCount * 100)
     
     document.getElementById("summary").innerHTML = `<div class="result-message">${text}</div>`;
 }
@@ -241,7 +240,7 @@ document.getElementById("confirmResetBtn").onclick = () => {
 
 function showSummary(total) {
     const lang = i18n[currentLang];
-    const text = lang.msgSummary.replace('{t}', total).replace('{s}', successCount).replace('{f}', failCount).replace('{p}', successCount / total);
+    const text = lang.msgSummary.replace('{t}', total).replace('{s}', successCount).replace('{f}', failCount).replace('{p}', successCount / total * 100);
     const summaryDiv = document.getElementById("summary");
     summaryDiv.innerHTML = `<div class="result-message">${text}</div>`;
     
