@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="icon" href="https://www.google.com/s2/favicons?sz=32&domain=discord.com">
+    
+    <title data-i18n="title">Discord Webhook Sender</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="card">
+    <div style="text-align: right;">
+        <button id="langToggleBtn" class="flag-btn">
+            <span id="flagIcon">🇺🇸</span>
+        </button>
+    </div>
+    
+    <h2 data-i18n="title">Discord Webhook 送信ツール</h2>
+
+    <label for="webhookInput" data-i18n="labelWebhook">Webhook URL:</label>
+    <input type="text" id="webhookInput" placeholder="https://discord.com/api/webhooks/....">
+
+    <label for="messageInput" data-i18n="labelMessage">送信内容:</label>
+    <input type="text" id="messageInput">
+
+    <label for="countInput" data-i18n="labelCount">送信回数:</label>
+    <input type="text" id="countInput">
+
+    <label for="delayInput" data-i18n="labelDelay">送信間隔（ms）:</label>
+    <input type="text" id="delayInput">
+
+    <label for="usernameInput" data-i18n="labelUsername">表示名（Webhook名）:</label>
+    <input type="text" id="usernameInput">
+
+    <label for="avatarInput" data-i18n="labelAvatar">アイコンURL:</label>
+    <input type="text" id="avatarInput">
+
+    <p>
+        <input type="checkbox" id="everyoneCheck"> <span data-i18n="checkEveryone">@everyone を付ける</span>
+    </p>
+
+    <div style="display:flex; gap:10px; margin-top:10px;">
+        <button id="sendBtn" data-i18n="btnSend">送信</button>
+        <button id="stopBtn" class="danger-btn" disabled data-i18n="btnStop">停止</button>
+        <button id="resetBtn" class="neutral-btn" data-i18n="btnReset">リセット</button>
+    </div>
+
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div id="summary"></div>
+
+    <div class="modal-overlay" id="errorModal">
+        <div class="modal">
+            <h3 data-i18n="modalErrorTitle">失敗詳細</h3>
+            <div id="errorDetails"></div>
+            <button id="closeErrorModal" data-i18n="btnClose">閉じる</button>
+        </div>
+    </div>
+
+    <div id="resultContainer"></div>
+
+    <div class="modal-overlay" id="resetModal">
+        <div class="modal">
+            <h3 data-i18n="modalResetTitle">確認</h3>
+            <p data-i18n="modalResetBody">本当にリセットしますか？</p>
+            <button id="confirmResetBtn" class="danger-btn" data-i18n="btnYes">はい</button>
+            <button id="closeResetModalBtn" class="neutral-btn" data-i18n="btnCancel">キャンセル</button>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
