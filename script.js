@@ -226,6 +226,8 @@ async function action() {
         if (delay > 0 && i < count) await new Promise(r => setTimeout(r, delay));
     }
 
+    document.getElementById("sendBtn").disabled = false;
+    document.getElementById("stopBtn").disabled = true;
     finishAction(count);
 }
 
