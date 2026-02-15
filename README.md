@@ -34,7 +34,7 @@ Runs entirely in your browser with support for loop sending, custom timing, and 
 └ 📂[script.js](script.js): Sending logic and saving functionality
 
 ## License
-
+```
 This project is licensed under the **Apache License 2.0**.
 
 Copyright (c) 2026 cod-git12
@@ -50,7 +50,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
+```
 ## ⚠️ Disclaimer
 
 - This tool is for educational and productivity purposes only.
