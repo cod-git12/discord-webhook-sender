@@ -73,6 +73,7 @@ let isStopped = false;
 let successCount = 0;
 let failCount = 0;
 let errors = [];
+let fullLogs = [];
 
 function updateLanguage() {
     const langData = i18n[currentLang];
@@ -100,6 +101,9 @@ function addResultMessage(message, detail = "") {
     const container = document.getElementById('resultContainer');
     const wrapper = document.createElement('div');
     wrapper.className = 'result-message';
+
+    fullLogs.push(`[${new Date().toLocaleTimeString('ja-JP', { hour12: false })}.${String(new Date().getMilliseconds()).padStart(3, '0')}] ${message}${detail ? ' : ' + detail : ''}`);
+
     wrapper.innerHTML = `
         <svg class="result-message-icon" role="img" viewBox="0 0 512 512" aria-hidden="true">
             <path fill="currentColor"
@@ -133,55 +137,45 @@ async function action() {
     const lang = i18n[currentLang];
     const webhookInput = document.getElementById("webhookInput").value.trim();
 
-    successCount = 0;
-    failCount = 0;
-    errors = [];
+    successCount = 0; failCount = 0; errors = []; fullLogs = [];
     document.getElementById("summary").innerHTML = "";
     document.getElementById("resultContainer").innerHTML = "";
     const progressBar = document.getElementById("progressBar");
-    if (progressBar) {
-        progressBar.style.width = "0%";
-        progressBar.style.background = "#28a745";
-    }
+    if (progressBar) progressBar.style.width = "0%";
 
     if (!webhookInput) {
         addResultMessage(currentLang === 'ja' ? "Webhook URLが入力されていないため、送信を開始できませんでした" : "Webhook URL is missing; cannot start.");
         return; 
     }
 
-    const messageInput = document.getElementById("messageInput").value.trim();
-    if (messageInput === "") {
-        addResultMessage(currentLang === 'ja' ? "送信内容が空欄だったので「こんにちは」を使用します" : "Message empty; using default.");
-    }
-    const message = messageInput || (currentLang === 'ja' ? "こんにちは" : "Hello");
+    const msgVal = document.getElementById("messageInput").value.trim();
+    if (msgVal === "") addResultMessage(currentLang === 'ja' ? "送信内容が空欄だったので「こんにちは」を使用します" : "Message empty; using default.");
+    const message = msgVal || (currentLang === 'ja' ? "こんにちは" : "Hello");
 
-    const countInputVal = document.getElementById("countInput").value.trim();
+    const countVal = document.getElementById("countInput").value.trim();
     let count = 5;
-    if (countInputVal === "") {
+    if (countVal === "") {
         addResultMessage(currentLang === 'ja' ? "送信回数が空欄だったので5回に設定しました" : "Count empty; set to 5.");
-    } else if (isNaN(parseInt(countInputVal)) || parseInt(countInputVal) <= 0) {
+    } else if (isNaN(parseInt(countVal)) || parseInt(countVal) <= 0) {
         addResultMessage(currentLang === 'ja' ? "送信回数の値が不正だったので5回に設定しました" : "Invalid count; set to 5.");
     } else {
-        count = parseInt(countInputVal);
+        count = parseInt(countVal);
     }
 
-    const delayInputVal = document.getElementById("delayInput").value.trim();
+    const delayVal = document.getElementById("delayInput").value.trim();
     let delay = 0;
-    if (delayInputVal === "") {
-    } else if (isNaN(parseInt(delayInputVal)) || parseInt(delayInputVal) < 0) {
-        addResultMessage(currentLang === 'ja' ? "送信間隔の値が不正だったので遅延なしで実行します" : "Invalid delay format; using 0ms.");
+    if (delayVal !== "" && (isNaN(parseInt(delayVal)) || parseInt(delayVal) < 0)) {
+        addResultMessage(currentLang === 'ja' ? "送信間隔の値が不正だったので遅延なしで実行します" : "Invalid delay; using 0ms.");
     } else {
-        delay = parseInt(delayInputVal);
+        delay = parseInt(delayVal) || 0;
     }
 
     const username = document.getElementById("usernameInput").value.trim();
-    if (username === "") {
-        addResultMessage(currentLang === 'ja' ? "表示名が未設定なのでデフォルトの名前を使用します" : "No display name; using Webhook default.");
-    }
+    if (username === "") addResultMessage(currentLang === 'ja' ? "表示名が未設定なのでデフォルトの名前を使用します" : "No display name; using default.");
 
     const avatar = document.getElementById("avatarInput").value.trim();
     if (avatar !== "" && !avatar.startsWith("http")) {
-        addResultMessage(currentLang === 'ja' ? "アイコンURLの形式が正しくない可能性があります（httpから始めてください）" : "Avatar URL might be invalid.");
+        addResultMessage(currentLang === 'ja' ? "アイコンURLの形式が正しくない可能性があります" : "Avatar URL might be invalid.");
     }
 
     const everyone = document.getElementById("everyoneCheck").checked;
@@ -192,10 +186,7 @@ async function action() {
     document.getElementById("stopBtn").disabled = false;
 
     for (let i = 1; i <= count; i++) {
-        if (isStopped) { 
-            addResultMessage(lang.msgStopped); 
-            break; 
-        }
+        if (isStopped) { addResultMessage(lang.msgStopped); break; }
 
         let payload = { content: everyone ? "@everyone " + message : message };
         if (username) payload.username = username;
@@ -212,23 +203,56 @@ async function action() {
                 successCount++;
             } else {
                 failCount++;
+                progressBar.style.backgroundColor = "#ed4243";
                 const errTxt = await res.text();
                 errors.push({ i, errTxt });
+                fullLogs.push(`[${new Date().toLocaleTimeString('ja-JP', { hour12: false })}.${String(new Date().getMilliseconds()).padStart(3, '0')}] [#${i}] ${errTxt}`);
             }
         } catch (e) {
             failCount++;
+            progressBar.style.backgroundColor = "#ed4243";
             errors.push({ i, errTxt: e.message });
+            fullLogs.push(`[${new Date().toLocaleTimeString('ja-JP', { hour12: false })}.${String(new Date().getMilliseconds()).padStart(3, '0')}] [#${i}] ${e.message}`);
         }
 
         updateLiveSummary(i, count);
         if (progressBar) progressBar.style.width = (i / count * 100) + "%";
-
         if (delay > 0 && i < count) await new Promise(r => setTimeout(r, delay));
     }
 
+    finishAction(count);
     document.getElementById("sendBtn").disabled = false;
     document.getElementById("stopBtn").disabled = true;
-    finishAction(count);
+}
+
+function finishAction(maxCount) {
+    const summaryDiv = document.getElementById("summary");
+    const btnArea = document.createElement("div");
+    btnArea.style = "display:flex; gap:10px; margin-top:10px;";
+
+    if (failCount > 0) {
+        const errBtn = document.createElement("button");
+        errBtn.textContent = i18n[currentLang].btnViewError;
+        errBtn.onclick = () => {
+            document.getElementById("errorDetails").innerHTML = errors.map(e => `<div><strong>#${e.i}</strong><pre>${e.errTxt}</pre></div>`).join("");
+            document.getElementById("errorModal").style.display = "flex";
+        };
+        btnArea.appendChild(errBtn);
+    }
+
+    const dlBtn = document.createElement("button");
+    dlBtn.textContent = currentLang === 'ja' ? "ログを保存" : "Save Log";
+    dlBtn.className = "neutral-btn";
+    dlBtn.onclick = () => {
+        const blob = new Blob([fullLogs.join('\n')], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `webhook_log_${new Date().getTime()}.txt`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+    };
+    btnArea.appendChild(dlBtn);
+    summaryDiv.appendChild(btnArea);
 }
 
 document.getElementById("confirmResetBtn").onclick = () => {

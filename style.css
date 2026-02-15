@@ -85,7 +85,6 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     background-color: #dc3545;
 }
 
-/* style.css の該当箇所を書き換え */
 .result-message {
     display: flex;
     align-items: flex-start;
@@ -104,7 +103,7 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     width: 20px;
     height: 20px;
     margin-right: 12px;
-    color: #007bff; /* インフォメーション色 */
+    color: #007bff;
 }
 
 .result-text {
@@ -138,6 +137,21 @@ pre {
     border-radius: 8px;
     max-width: 500px;
     width: 90%;
+}
+
+#errorDetails {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+#errorDetails div {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+#errorDetails strong {
+    color: #dc3545;
+    display: block;
+    margin-top: 5px;
 }
 
 pre { background: #f8f9fa; padding: 8px; border-radius: 4px; font-size: 12px; overflow-x: auto; }
