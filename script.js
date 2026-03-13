@@ -128,7 +128,7 @@ function updateLiveSummary(currentTotal, maxCount) {
         .replace('{t}', maxCount)
         .replace('{s}', successCount)
         .replace('{f}', failCount)
-        .replace('{p}', successCount / maxCount * 100)
+        .replace('{p}', ((successCount / maxCount) * 100).toFixed(1))
     
     document.getElementById("summary").innerHTML = `<div class="result-message">${text}</div>`;
 }

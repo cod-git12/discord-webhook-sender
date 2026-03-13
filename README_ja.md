@@ -3,7 +3,8 @@
 DiscordのWebhookを利用して、メッセージを簡単かつ連続して送信するためのWebツールです。  
 ブラウザだけで動作し、送信間隔や表示名、アイコンのカスタマイズも可能です。
 
-[English README.md](README.md)
+- [English](README.md)
+- [日本語](README_ja.md)
 
 ## ✨ 特徴
 

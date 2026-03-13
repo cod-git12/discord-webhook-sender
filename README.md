@@ -3,7 +3,8 @@
 A simple and powerful web tool to send messages through Discord Webhooks.  
 Runs entirely in your browser with support for loop sending, custom timing, and profile overrides.
 
-[日本語のドキュメント](README_ja.md)
+- [English](README.md)
+- [日本語](README_ja.md)
 
 ## ✨ Features
 
